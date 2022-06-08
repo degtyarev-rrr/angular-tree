@@ -1,10 +1,10 @@
-import { TreeItem } from '../app/tree-item';
+import { ITreeItem } from '../app/tree-structure/tree-item';
 
-export const data: TreeItem[] = [
-  {id: '1', name: 'John', age: 40, children: []},
-  {id: '2', name: 'Edwin', age: 54, children: [{id: '4', name: 'James', age: 20, children: []},
-                                               {id: '5', name: 'Ruby', age: 25, children: []}]},
-  {id: '3', name: 'Sandra', age: 48, children: [{id: '6', name: 'Erin', age: 13, children: []}, 
-                                                {id: '7', name: 'Robert', age: 32, children: [{id: '9', name: 'Kelly', age: 12, children: []},
-                                                                                              {id: '10', name: 'Kevin', age: 15, children: []}]}, 
-                                                {id: '8', name: 'Stanley', age: 17, children: []}]}];
+export const data: ITreeItem[] = [
+  {id: 'id1', name: 'John', age: 40, selected: false, children: []},
+  {id: 'id2', name: 'Edwin', age: 54, selected: false, children: [{id: 'id4', name: 'James', age: 20, selected: false, children: []},
+                                               {id: 'id5', name: 'Ruby', age: 25, selected: false, children: []}]},
+  {id: 'id3', name: 'Sandra', age: 48, selected: false, children: [{id: 'id6', name: 'Erin', age: 13, selected: false, children: []}, 
+                                                {id: 'id7', name: 'Robert', age: 32, selected: false, children: [{id: 'id9', name: 'Kelly', age: 12, selected: false, children: []},
+                                                                                              {id: 'id10', name: 'Kevin', age: 15, selected: false, children: []}]}, 
+                                                {id: 'id8', name: 'Stanley', age: 17, selected: false, children: []}]}];

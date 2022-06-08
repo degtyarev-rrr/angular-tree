@@ -1,0 +1,16 @@
+<ng-template #listItem let-item>
+  <li class="tree-list__item">
+    <input (change)="onCheckboxChange($event, item)" class="tree-list__input" type="checkbox" id="{{item.treeItem.id}}"> 
+    <label class="tree-list__text" for="{{item.treeItem.id}}">My name`s {{item.treeItem.name}} and I`m {{item.treeItem.age}}</label>
+    
+    <ng-container *ngIf="item.getChildren().length > 0">
+      <ul *ngFor="let item of item.getChildren()">
+        <ng-container *ngTemplateOutlet="listItem; context: {$implicit: item}"></ng-container>
+      </ul>
+    </ng-container>
+  </li>
+</ng-template>
+
+<ul class="tree-list" *ngFor="let item of items.getChildren()">
+  <ng-container *ngTemplateOutlet="listItem; context: {$implicit: item}"></ng-container>
+</ul>
