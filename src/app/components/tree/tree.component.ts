@@ -1,4 +1,4 @@
-import { Component, forwardRef } from '@angular/core';
+import { Component, forwardRef, Input } from '@angular/core';
 import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
 import { TreeService } from 'src/app/services/tree.service';
 import { data } from '../../../assets/data';
@@ -17,6 +17,7 @@ import { ITree } from 'src/app/tree-structure/tree-structure';
 export class TreeComponent implements ControlValueAccessor {
   items: ITree;
   selected: ITree[] = [];
+  searchText: string = '';
   onChange(_: any) {};
 
   constructor(private treeService: TreeService) {
@@ -80,6 +81,11 @@ export class TreeComponent implements ControlValueAccessor {
 
     item.treeItem!.selected = !item.treeItem!.selected;
     this.removeSelectedItem(this.selected.splice(this.selected.findIndex(treeItem => treeItem === item), 1)[0]);
+  }
+
+  search() {
+    const input = document.getElementById('search') as HTMLInputElement;
+    this.searchText = input.value;
   }
 
   writeValue(val: any): void {

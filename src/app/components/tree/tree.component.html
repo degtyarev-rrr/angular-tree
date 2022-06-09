@@ -1,7 +1,12 @@
+<div class="tree-list__search">
+  <input class="tree-list__search-input" type="text" [value]="searchText" id="search" placeholder="Search...">
+  <button class="tree-list__search-submit" type="submit" (click)="search()"><i class="fa fa-search"></i></button>
+</div>
+
 <ng-template #listItem let-item>
   <li class="tree-list__item">
-    <input (change)="onCheckboxChange($event, item)" class="tree-list__input" type="checkbox" id="{{item.treeItem.id}}"> 
-    <label class="tree-list__text" for="{{item.treeItem.id}}">My name`s {{item.treeItem.name}} and I`m {{item.treeItem.age}}</label>
+    <input class="tree-list__input" (change)="onCheckboxChange($event, item)" type="checkbox" id="{{item.treeItem.id}}"> 
+    <label class="tree-list__text" for="{{item.treeItem.id}}" search [searchText]="searchText">My name`s {{item.treeItem.name}} and I`m {{item.treeItem.age}}</label>
     
     <ng-container *ngIf="item.getChildren().length > 0">
       <ul *ngFor="let item of item.getChildren()">
