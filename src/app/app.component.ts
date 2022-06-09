@@ -12,8 +12,8 @@ export class AppComponent {
   constructor(private fb: FormBuilder) {
     this.form = this.fb.group({
       selected: [[]]
-     });
-     
+    });
+
     this.form.valueChanges.subscribe(val => {
       console.log(val)
     })

@@ -1,5 +1,5 @@
-import { Component, forwardRef, OnInit } from '@angular/core';
-import { ControlValueAccessor, FormBuilder, FormControl, FormGroup, NG_VALUE_ACCESSOR } from '@angular/forms';
+import { Component, forwardRef } from '@angular/core';
+import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
 import { TreeService } from 'src/app/services/tree.service';
 import { data } from '../../../assets/data';
 import { ITree } from 'src/app/tree-structure/tree-structure';
@@ -19,64 +19,67 @@ export class TreeComponent implements ControlValueAccessor {
   selected: ITree[] = [];
   onChange(_: any) {};
 
-  constructor(private treeService: TreeService, private fb: FormBuilder){
+  constructor(private treeService: TreeService) {
     this.items = this.treeService.getTree(data, null);
   }
   
   onCheckboxChange(event: any, item: ITree) {
     (item.treeItem!.selected)? this.removeSelect(item) : this.addSelect(item);
 
-    this.onChange(this.selected);
-  }
-
-  removeSelect(item: ITree) {
-    if(!item.treeItem!.selected) {
-      return;
-    }
-
-    item.treeItem!.selected = !item.treeItem!.selected;
-    this.removeSelectedItem(this.selected.splice(this.selected.findIndex(treeItem => treeItem === item), 1)[0])
-
-    if(!!item.getChildren().length) {
-      item.getChildren().forEach(treeItem => this.removeSelect(treeItem));
-    }
+    this.onChange(this.selected.map(item => item.treeItem!.id));
   }
 
   addSelect(item: ITree) {
-    if(!!item.treeItem!.selected) {
-      return;
-    }
+    if(!!item.treeItem!.selected) return;
 
     item.treeItem!.selected = !item.treeItem!.selected;
     this.selected.push(item);
-    this.showSelectedItems();
+    this.showSelectedItem(item);
+    this.checkSiblings(item);
 
-    if(!!item.getChildren().length) {
+    if(!!item.getChildren().length)
       item.getChildren().forEach(treeItem => this.addSelect(treeItem));
-    }
   }
   
-  showSelectedItems() {
-    const arrayOfItems = this.selected.map(item => {
-      return {
-        id: item.treeItem!.id,
-        selected: item.treeItem!.selected
-      }
-    });
+  removeSelect(item: ITree) {
+    if(!item.treeItem!.selected) return;
 
-    arrayOfItems.forEach(item => {
-      const element = document.getElementById(item.id) as HTMLInputElement | null;
+    item.treeItem!.selected = !item.treeItem!.selected;
+    this.removeSelectedItem(this.selected.splice(this.selected.findIndex(treeItem => treeItem === item), 1)[0]);
 
-      if(!!element) 
-        element.checked = item.selected;
-    })
+    if(!!item.getChildren().length)
+      item.getChildren().forEach(treeItem => this.removeSelect(treeItem));
+  }
+
+  showSelectedItem(item: ITree) {
+    const element = document.getElementById(item.treeItem!.id) as HTMLInputElement;
+
+    if(!!element) 
+      element.checked = true;
    }
 
   removeSelectedItem(item: ITree) {
-    const element = document.getElementById(item.treeItem!.id) as HTMLInputElement | null;
+    const element = document.getElementById(item.treeItem!.id) as HTMLInputElement;
+    
+    if(!!item.getParent()!.parent) 
+      this.removeSelectForParent(item.getParent()!);
 
     if(!!element) 
       element.checked = false;
+  }
+
+  checkSiblings(item: ITree) {
+    if(!item.getParent()?.parent) return;
+
+    if(item.getParent()?.getChildren().every(item => item.treeItem?.selected))
+      this.addSelect(item.getParent()!) 
+  }
+
+  removeSelectForParent(item: ITree) {
+    if(!item.treeItem!.selected) return;
+
+    item.treeItem!.selected = !item.treeItem!.selected;
+    this.removeSelectedItem(this.selected.splice(this.selected.findIndex(treeItem => treeItem === item), 1)[0]);
   }
 
   writeValue(val: any): void {

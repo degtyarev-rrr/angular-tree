@@ -1,7 +1,7 @@
 import { ITreeItem } from "./tree-item";
 
 export interface ITree {
-  parent: ITree| null;
+  parent: ITree | null;
   treeItem: ITreeItem | null; 
   getParent(): ITree | null;
   getChildren(): ITree[];
@@ -37,7 +37,7 @@ export class Branch implements ITree {
   } 
 
   add(component: ITree): void {
-      this.children.push(component);
+    this.children.push(component);
   }
 
   getChildren(): ITree[] {
