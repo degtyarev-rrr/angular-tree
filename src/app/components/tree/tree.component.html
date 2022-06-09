@@ -6,7 +6,7 @@
 <ng-template #listItem let-item>
   <li class="tree-list__item">
     <input class="tree-list__input" (change)="onCheckboxChange($event, item)" type="checkbox" id="{{item.treeItem.id}}"> 
-    <label class="tree-list__text" for="{{item.treeItem.id}}" search [searchText]="searchText">My name`s {{item.treeItem.name}} and I`m {{item.treeItem.age}}</label>
+    <label class="tree-list__text" for="{{item.treeItem.id}}" search [searchText]="searchText">My name`s {{item.treeItem.name | format}} and I`m {{item.treeItem.age | format}}</label>
     
     <ng-container *ngIf="item.getChildren().length > 0">
       <ul *ngFor="let item of item.getChildren()">
