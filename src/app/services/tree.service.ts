@@ -3,10 +3,10 @@ import { ITree, Leaf, Branch } from "../tree-structure/tree-structure";
 
 export class TreeService {
   getTree(items: ITreeItem[], parent: ITree | null, treeItem?: ITreeItem): ITree {
-    const tree = (!!treeItem)? new Branch(parent, treeItem) : new Branch(parent, null);
+    const tree = (treeItem)? new Branch(parent, treeItem) : new Branch(parent, null);
 
     items.forEach(item => {
-      if(!!item.children.length) {
+      if(item.children.length) {
         const branch = this.getTree(item.children, tree, item);
         tree.add(branch);     
       } else {

@@ -9,10 +9,10 @@ export interface ITree {
 }
 
 export class Leaf implements ITree {
-  treeItem: ITreeItem | null;
-  parent: ITree | null;
+  treeItem: ITreeItem;
+  parent: ITree;
 
-  constructor(parent: ITree | null, treeItem: ITreeItem | null) {
+  constructor(parent: ITree, treeItem: ITreeItem) {
     this.parent = parent;
     this.treeItem = treeItem;
   } 
@@ -21,8 +21,8 @@ export class Leaf implements ITree {
     return [];
   }
 
-  getParent(): ITree | null {
-      return this.parent;
+  getParent(): ITree {
+    return this.parent;
   }
 }
 

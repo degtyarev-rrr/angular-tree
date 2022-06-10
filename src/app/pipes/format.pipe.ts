@@ -8,8 +8,8 @@ export class FormatPipe implements PipeTransform {
     if(!value) {
       if(typeof value === 'string') return 'Имя не определено!';
       if(typeof value === 'number') return 'Возраст не определен!';
-    } else {
-      return value;
     }
+     
+    return value;
   }
 }

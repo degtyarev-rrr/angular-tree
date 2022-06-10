@@ -9,34 +9,26 @@ export class SearchDirective implements DoCheck {
   constructor(private element: ElementRef, private renderer: Renderer2) {}
 
   ngDoCheck(): void {  
-    this.highlightItems();
+    this.showResults();
   }
 
-  highlightItems() {
-    if(this.element.nativeElement.textContent.includes(this.searchText) && !!this.searchText) {
-      this.renderer.setStyle(this.element.nativeElement, "background", "#00B4CC");
-      this.renderer.setStyle(this.element.nativeElement, "color", "#444444");
-      this.deleteDisable(this.element);
-    } else if (!!this.searchText) { 
-      this.renderer.setStyle(this.element.nativeElement, "background", "#f3f1ef");
-      this.renderer.setStyle(this.element.nativeElement, "color", "#dad2ca");
-      this.disable(this.element);
+  showResults() {
+    if(this.element.nativeElement.textContent.includes(this.searchText) && this.searchText) {
+      this.highlightItems(false, '#444444', '#00b4cc');
+    } else if (this.searchText) { 
+      this.highlightItems(true, '#dad2ca', '#f3f1ef');
     } else {
-      this.renderer.setStyle(this.element.nativeElement, "background", "");
-      this.renderer.setStyle(this.element.nativeElement, "color", "");
-      this.deleteDisable(this.element);
+      this.highlightItems(false);
     }
   }
-
-  disable(element: ElementRef) {
-    element.nativeElement.parentNode.querySelectorAll('input').forEach((elem: HTMLInputElement) => {
-      elem.disabled = true;
-    })
+  
+  highlightItems(disabled: boolean, color: string = '', background: string = '') {
+    this.renderer.setStyle(this.element.nativeElement, 'background', background);
+    this.renderer.setStyle(this.element.nativeElement, 'color', color);
+    this.disable(this.element, disabled);
   }
 
-  deleteDisable(element: ElementRef) {
-    element.nativeElement.parentNode.querySelectorAll('input').forEach((elem: HTMLInputElement) => {
-      elem.disabled = false;
-    })
+  disable(element: ElementRef, disabled: boolean) {
+    element.nativeElement.parentNode.querySelectorAll('input').forEach((elem: HTMLInputElement) =>  elem.disabled = disabled)
   }
 }

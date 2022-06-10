@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
-import { FormArray, FormBuilder, FormGroup } from '@angular/forms';
+import { FormBuilder, FormGroup } from '@angular/forms';
+import { TreeComponent } from './components/tree/tree.component';
 
 @Component({
   selector: 'app-root',
@@ -11,7 +12,7 @@ export class AppComponent {
 
   constructor(private fb: FormBuilder) {
     this.form = this.fb.group({
-      selected: [[]]
+      selected: []
     });
 
     this.form.valueChanges.subscribe(val => {
