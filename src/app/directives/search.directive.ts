@@ -1,14 +1,14 @@
-import { Directive, ElementRef, Renderer2, Input, DoCheck } from '@angular/core';
+import { Directive, ElementRef, Renderer2, Input, OnChanges, SimpleChanges } from '@angular/core';
 
 @Directive({
     selector: '[search]'
 })
-export class SearchDirective implements DoCheck { 
+export class SearchDirective implements OnChanges { 
   @Input() searchText: string = '';
 
   constructor(private element: ElementRef, private renderer: Renderer2) {}
 
-  ngDoCheck(): void {  
+  ngOnChanges(changes: SimpleChanges): void {
     this.showResults();
   }
 

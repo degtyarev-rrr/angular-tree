@@ -1,6 +1,5 @@
 import { Component } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
-import { TreeComponent } from './components/tree/tree.component';
 
 @Component({
   selector: 'app-root',
