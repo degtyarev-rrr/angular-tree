@@ -1,20 +1,46 @@
+<!-- Сделать форму для инпута и задизейблить кнопку если searchText есть -->
+
 <div class="tree-list__search">
-  <input class="tree-list__search-input" type="text" [value]="searchText" id="search" placeholder="Search...">
-  <button class="tree-list__search-submit" type="submit" (click)="search()"><i class="fa fa-search"></i></button>
+  <input
+    [value]="searchText"
+    class="tree-list__search-input"
+    type="text"
+    id="search"
+    placeholder="Search..."
+  />
+  <button class="tree-list__search-submit" type="submit" (click)="search()">
+    <i class="fa fa-search"></i>
+  </button>
 </div>
 
 <ul class="tree-list" *ngFor="let item of tree.getChildren()">
-  <ng-container *ngTemplateOutlet="listItem; context: {$implicit: item}"></ng-container>
+  <ng-container
+    *ngTemplateOutlet="listItem; context: { $implicit: item }"
+  ></ng-container>
 </ul>
 
 <ng-template #listItem let-item>
   <li class="tree-list__item">
-    <input class="tree-list__input" (change)="onCheckboxChange($event, item)" type="checkbox" id="{{item.treeItem.id}}"> 
-    <label class="tree-list__text" for="{{item.treeItem.id}}" search [searchText]="searchText">My name`s {{item.treeItem.name | format}} and I`m {{item.treeItem.age | format}}</label>
-    
+    <input
+      class="tree-list__input"
+      (change)="onCheckboxChange($event, item)"
+      type="checkbox"
+      id="{{ item.treeItem.id }}"
+    />
+    <label
+      class="tree-list__text"
+      for="{{ item.treeItem.id }}"
+      search
+      [searchText]="searchText"
+      >My name`s {{ item.treeItem.name | format }} and I`m
+      {{ item.treeItem.age | format }}</label
+    >
+
     <ng-container *ngIf="item.getChildren().length">
       <ul *ngFor="let item of item.getChildren()">
-        <ng-container *ngTemplateOutlet="listItem; context: {$implicit: item}"></ng-container>
+        <ng-container
+          *ngTemplateOutlet="listItem; context: { $implicit: item }"
+        ></ng-container>
       </ul>
     </ng-container>
   </li>

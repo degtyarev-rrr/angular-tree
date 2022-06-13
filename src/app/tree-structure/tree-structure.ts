@@ -1,8 +1,13 @@
-import { ITreeItem } from "./tree-item";
+import { ITreeItem } from './tree-item';
+
+/* TODO необязательно использовать I (чисто на будущее)
+   + заимплементить логику с селектами
+   + переделать на абстрактный класс
+*/
 
 export interface ITree {
   parent: ITree | null;
-  treeItem: ITreeItem | null; 
+  treeItem: ITreeItem | null;
   getParent(): ITree | null;
   getChildren(): ITree[];
   add?(component: ITree): void;
@@ -15,7 +20,7 @@ export class Leaf implements ITree {
   constructor(parent: ITree, treeItem: ITreeItem) {
     this.parent = parent;
     this.treeItem = treeItem;
-  } 
+  }
 
   getChildren() {
     return [];
@@ -29,12 +34,12 @@ export class Leaf implements ITree {
 export class Branch implements ITree {
   parent: ITree | null;
   children: ITree[] = [];
-  treeItem: ITreeItem | null; 
+  treeItem: ITreeItem | null;
 
   constructor(parent: ITree | null, treeItem: ITreeItem | null) {
     this.parent = parent;
     this.treeItem = treeItem;
-  } 
+  }
 
   add(component: ITree): void {
     this.children.push(component);

@@ -1,21 +1,26 @@
 import { Component } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 
+/* TODO вынести форму в onInit*/
+
+/*
+  onPush, trachBy - почитать + применить
+*/
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
-  styleUrls: ['./app.component.css']
+  styleUrls: ['./app.component.css'],
 })
 export class AppComponent {
   form: FormGroup;
 
   constructor(private fb: FormBuilder) {
     this.form = this.fb.group({
-      selected: []
+      selected: [],
     });
 
-    this.form.valueChanges.subscribe(val => {
-      console.log(val)
-    })
-  }  
+    this.form.valueChanges.subscribe((val) => {
+      console.log(val);
+    });
+  }
 }
