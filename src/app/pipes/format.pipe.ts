@@ -5,7 +5,7 @@ import { Pipe, PipeTransform } from '@angular/core';
   name: 'format',
 })
 export class FormatPipe implements PipeTransform {
-  transform(value: any): any {
+  transform<T>(value: T): T | string {
     if (!value) {
       if (typeof value === 'string') return 'Имя не определено!';
       if (typeof value === 'number') return 'Возраст не определен!';

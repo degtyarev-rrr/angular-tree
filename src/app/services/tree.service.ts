@@ -1,25 +1,16 @@
-import { ITreeItem } from '../tree-structure/tree-item';
-import { ITree, Leaf, Branch } from '../tree-structure/tree-structure';
+import { TreeItem } from '../tree-structure/tree-item';
+import { Tree, Leaf, Branch } from '../tree-structure/tree-structure';
 
 /* TODO reduce + тернарник */
 export class TreeService {
-  getTree(
-    items: ITreeItem[],
-    parent: ITree | null,
-    treeItem?: ITreeItem
-  ): ITree {
-    const tree = treeItem
-      ? new Branch(parent, treeItem)
-      : new Branch(parent, null);
-    items.forEach((item) => {
-      if (item.children.length) {
-        const branch = this.getTree(item.children, tree, item);
-        tree.add(branch);
-      } else {
-        const leaf = new Leaf(tree, item);
-        tree.add(leaf);
-      }
-    });
+  getTree(items: TreeItem[]): Tree {
+    const tree: Tree = items.reduce((tree, item) => {
+      if (item.children.length) tree.add(this.getTree(item.children), item);
+
+      if (!item.children.length) tree.add(new Leaf(), item);
+
+      return tree;
+    }, new Branch());
 
     return tree;
   }

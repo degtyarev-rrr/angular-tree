@@ -1,55 +1,64 @@
-import { ITreeItem } from './tree-item';
+import { TreeItem } from './tree-item';
 
 /* TODO необязательно использовать I (чисто на будущее)
    + заимплементить логику с селектами
    + переделать на абстрактный класс
 */
 
-export interface ITree {
-  parent: ITree | null;
-  treeItem: ITreeItem | null;
-  getParent(): ITree | null;
-  getChildren(): ITree[];
-  add?(component: ITree): void;
+export abstract class Tree {
+  parent!: Tree;
+  children!: Tree[];
+  treeItem!: TreeItem;
+  selected: boolean = false;
+  isBranch: boolean = false;
+
+  checkSiblings() {
+    if (!this.parent) return;
+
+    if (this.parent.children.every(item => item.selected)) {
+      this.parent.selected = true;
+      this.parent.checkSiblings();
+    }
+  }
+
+  removeSelectForParent() {
+    if (!this.parent) return;
+
+    this.parent.selected = false;
+    this.parent.removeSelectForParent();
+  }
+
+  abstract changeSelect(selectValue: boolean): void;
 }
 
-export class Leaf implements ITree {
-  treeItem: ITreeItem;
-  parent: ITree;
+export class Leaf extends Tree {
+  changeSelect(selectValue: boolean) {
+    if (!selectValue) this.removeSelectForParent();
 
-  constructor(parent: ITree, treeItem: ITreeItem) {
-    this.parent = parent;
-    this.treeItem = treeItem;
-  }
-
-  getChildren() {
-    return [];
-  }
-
-  getParent(): ITree {
-    return this.parent;
+    this.selected = selectValue;
+    this.checkSiblings();
   }
 }
 
-export class Branch implements ITree {
-  parent: ITree | null;
-  children: ITree[] = [];
-  treeItem: ITreeItem | null;
+export class Branch extends Tree {
+  override children: Tree[] = [];
+  override isBranch = true;
 
-  constructor(parent: ITree | null, treeItem: ITreeItem | null) {
-    this.parent = parent;
-    this.treeItem = treeItem;
-  }
-
-  add(component: ITree): void {
+  add(component: Tree, treeItem: TreeItem): void {
+    component.treeItem = treeItem;
+    component.parent = this;
     this.children.push(component);
   }
 
-  getChildren(): ITree[] {
-    return this.children;
+  changeSelect(selectValue: boolean): void {
+    if (!selectValue) this.removeSelectForParent();
+
+    this.selected = selectValue;
+    this.changeSelectForChildren(this.selected);
+    this.checkSiblings();
   }
 
-  getParent(): ITree | null {
-    return this.parent;
+  changeSelectForChildren(selectValue: boolean): void {
+    this.children.map((item: Tree) => item.changeSelect(selectValue));
   }
 }

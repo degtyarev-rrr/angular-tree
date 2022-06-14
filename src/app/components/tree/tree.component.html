@@ -2,18 +2,12 @@
 
 <div class="tree-list__search">
   <input
-    [value]="searchText"
+    [(ngModel)]="searchText"
     class="tree-list__search-input"
-    type="text"
-    id="search"
     placeholder="Search..."
   />
-  <button class="tree-list__search-submit" type="submit" (click)="search()">
-    <i class="fa fa-search"></i>
-  </button>
 </div>
-
-<ul class="tree-list" *ngFor="let item of tree.getChildren()">
+<ul class="tree-list" *ngFor="let item of tree!.children">
   <ng-container
     *ngTemplateOutlet="listItem; context: { $implicit: item }"
   ></ng-container>
@@ -21,23 +15,24 @@
 
 <ng-template #listItem let-item>
   <li class="tree-list__item">
-    <input
-      class="tree-list__input"
+    <input 
       (change)="onCheckboxChange($event, item)"
+      [checked]="item.selected"
+      class="tree-list__input"
       type="checkbox"
       id="{{ item.treeItem.id }}"
     />
     <label
-      class="tree-list__text"
-      for="{{ item.treeItem.id }}"
       search
       [searchText]="searchText"
+      class="tree-list__text"
+      for="{{ item.treeItem.id }}"
       >My name`s {{ item.treeItem.name | format }} and I`m
       {{ item.treeItem.age | format }}</label
     >
 
-    <ng-container *ngIf="item.getChildren().length">
-      <ul *ngFor="let item of item.getChildren()">
+    <ng-container *ngIf="item.isBranch">
+      <ul *ngFor="let item of item.children">
         <ng-container
           *ngTemplateOutlet="listItem; context: { $implicit: item }"
         ></ng-container>

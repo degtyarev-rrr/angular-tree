@@ -1,7 +1,6 @@
-export interface ITreeItem {
+export interface TreeItem {
   id: string;
   name: string;
   age: number;
-  selected: boolean;
-  children: ITreeItem[];
+  children: TreeItem[];
 }

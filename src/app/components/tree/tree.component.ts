@@ -1,102 +1,44 @@
-import { Component, forwardRef } from '@angular/core';
+import { Component, forwardRef, OnInit } from '@angular/core';
 import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
+
 import { TreeService } from 'src/app/services/tree.service';
+import { Tree, Leaf } from 'src/app/tree-structure/tree-structure';
 import { data } from '../../../assets/data';
-import { ITree } from 'src/app/tree-structure/tree-structure';
 
 @Component({
   selector: 'app-tree',
   templateUrl: './tree.component.html',
   styleUrls: ['./tree.component.css'],
-  providers: [ TreeService, { 
-    provide: NG_VALUE_ACCESSOR,
-    useExisting: forwardRef(() => TreeComponent),
-    multi: true
-   }]
+  providers: [
+    TreeService,
+    {
+      provide: NG_VALUE_ACCESSOR,
+      useExisting: forwardRef(() => TreeComponent),
+      multi: true,
+    },
+  ],
 })
-export class TreeComponent implements ControlValueAccessor {
-  tree: ITree;
-  selectedItems: ITree[] = [];
+export class TreeComponent implements ControlValueAccessor, OnInit {
+  tree: Tree | undefined;
   searchText: string = '';
-  onChange(_: any) {};
+  onChange: Function = (_: any): void => {};
 
-  constructor(private treeService: TreeService) {
-    this.tree = this.treeService.getTree(data, null);
-  }
-  
-  onCheckboxChange(event: any, item: ITree) {
-    (item.treeItem!.selected)? this.removeSelect(item) : this.addSelect(item);
+  constructor(private treeService: TreeService) {}
 
-    this.onChange(this.selectedItems.map(item => item.treeItem!.id));
+  ngOnInit(): void {
+    this.tree = this.treeService.getTree(data);
   }
 
-  addSelect(item: ITree) {
-    if(item.treeItem!.selected) return;
-
-    item.treeItem!.selected = !item.treeItem!.selected;
-    this.selectedItems.push(item);
-    this.showSelectedItem(item);
-    this.checkSiblings(item);
-
-    if(item.getChildren().length)
-      item.getChildren().forEach(treeItem => this.addSelect(treeItem));
-  }
-  
-  removeSelect(item: ITree) {
-    if(!item.treeItem!.selected) return;
-
-    item.treeItem!.selected = !item.treeItem!.selected;
-    this.removeSelectedItem(this.selectedItems.splice(this.selectedItems.findIndex(treeItem => treeItem === item), 1)[0]);
-
-    if(item.getChildren().length)
-      item.getChildren().forEach(treeItem => this.removeSelect(treeItem));
+  onCheckboxChange(event: any, item: Tree) {
+    item.changeSelect(!item.selected);
+    this.onChange();
   }
 
-  showSelectedItem(item: ITree) {
-    const element = document.getElementById(item.treeItem!.id) as HTMLInputElement;
-
-    if(element) 
-      element.checked = true;
-  }
-
-  removeSelectedItem(item: ITree) {
-    const element = document.getElementById(item.treeItem!.id) as HTMLInputElement;
-    
-    if(item.getParent()!.parent) 
-      this.removeSelectForParent(item.getParent()!);
-
-    if(element) 
-      element.checked = false;
-  }
-
-  checkSiblings(item: ITree) {
-    if(!item.getParent()?.parent) return;
-
-    if(item.getParent()?.getChildren().every(item => item.treeItem?.selected))
-      this.addSelect(item.getParent()!) 
-  }
-
-  removeSelectForParent(item: ITree) {
-    if(!item.treeItem!.selected) return;
-
-    item.treeItem!.selected = !item.treeItem!.selected;
-    this.removeSelectedItem(this.selectedItems.splice(this.selectedItems.findIndex(treeItem => treeItem === item), 1)[0]);
-  }
-
-  search() {
-    const input = document.getElementById('search') as HTMLInputElement;
-    this.searchText = input.value;
-  }
-
-  writeValue(val: any): void {
-    if(val)
-      this.onCheckboxChange(null, val);
-  }
+  writeValue(val: any): void {}
 
   registerOnChange(fn: any): void {
-    this.onChange = fn;      
+    this.onChange = fn;
   }
 
-  registerOnTouched(fn: any): void {     
-  }
+  registerOnTouched(fn: any): void {}
 }
