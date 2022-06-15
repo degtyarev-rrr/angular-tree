@@ -1,12 +1,20 @@
 <!-- Сделать форму для инпута и задизейблить кнопку если searchText есть -->
 
-<div class="tree-list__search">
+<form
+  [formGroup]="searchForm"
+  (ngSubmit)="submitSearchForm()"
+  class="search-form"
+>
   <input
-    [(ngModel)]="searchText"
-    class="tree-list__search-input"
+    formControlName="searchText"
+    class="search-form__input"
     placeholder="Search..."
   />
-</div>
+  <button class="search-form__submit" type="submit">
+    <i class="fa fa-search"></i>
+  </button>
+</form>
+
 <ul class="tree-list" *ngFor="let item of tree!.children">
   <ng-container
     *ngTemplateOutlet="listItem; context: { $implicit: item }"
@@ -15,18 +23,20 @@
 
 <ng-template #listItem let-item>
   <li class="tree-list__item">
-    <input 
-      (change)="onCheckboxChange($event, item)"
+    <input
       [checked]="item.selected"
+      [disabled]="name.isDisabled"
+      [id]="item.treeItem.id"
+      (change)="onCheckboxChange($event, item)"
       class="tree-list__input"
       type="checkbox"
-      id="{{ item.treeItem.id }}"
     />
     <label
       search
       [searchText]="searchText"
+      [for]="item.treeItem.id"
       class="tree-list__text"
-      for="{{ item.treeItem.id }}"
+      #name="search"
       >My name`s {{ item.treeItem.name | format }} and I`m
       {{ item.treeItem.age | format }}</label
     >

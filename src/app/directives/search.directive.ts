@@ -1,22 +1,41 @@
 import {
   Directive,
   ElementRef,
-  Renderer2,
   Input,
   OnChanges,
+  HostBinding,
 } from '@angular/core';
 
 /* TODO перелопатить директиву  @HostListener, @HostBinding <- почитать + применить*/
+
+enum Colors {
+  DISABLE_TEXT_COLOR = '#dad2ca',
+  DISABLE_BG_COLOR = '#f3f1ef',
+  ENABLE_TEXT_COLOR = '#444444',
+  ENABLE_BG_COLOR = '#00b4cc',
+}
 @Directive({
   selector: '[search]',
+  exportAs: 'search',
 })
 export class SearchDirective implements OnChanges {
-  @Input() searchText: string = '';
+  backgroundColor!: string;
+  textColor!: string;
+  isDisabled!: boolean;
+  @Input() searchText!: string;
 
-  constructor(private element: ElementRef, private renderer: Renderer2) {}
+  constructor(private element: ElementRef) {}
 
   ngOnChanges(): void {
     this.showResults();
+  }
+
+  @HostBinding('style.background') get getBackgroundColor(): string {
+    return this.backgroundColor;
+  }
+
+  @HostBinding('style.color') get getTextColor(): string {
+    return this.textColor;
   }
 
   showResults() {
@@ -24,12 +43,24 @@ export class SearchDirective implements OnChanges {
       this.element.nativeElement.textContent.includes(this.searchText) &&
       this.searchText
     ) {
-      this.highlightItems(false, '#444444', '#00b4cc');
-    } else if (this.searchText) {
-      this.highlightItems(true, '#dad2ca', '#f3f1ef');
-    } else {
-      this.highlightItems(false);
+      this.highlightItems(
+        false,
+        Colors.ENABLE_TEXT_COLOR,
+        Colors.ENABLE_BG_COLOR
+      );
+      return;
     }
+
+    if (this.searchText) {
+      this.highlightItems(
+        true,
+        Colors.DISABLE_TEXT_COLOR,
+        Colors.DISABLE_BG_COLOR
+      );
+      return;
+    }
+
+    this.highlightItems(false);
   }
 
   highlightItems(
@@ -37,18 +68,12 @@ export class SearchDirective implements OnChanges {
     color: string = '',
     background: string = ''
   ) {
-    this.renderer.setStyle(
-      this.element.nativeElement,
-      'background',
-      background
-    );
-    this.renderer.setStyle(this.element.nativeElement, 'color', color);
-    this.disable(this.element, disabled);
+    this.textColor = color;
+    this.backgroundColor = background;
+    this.isDisabled = disabled;
   }
 
   disable(element: ElementRef, disabled: boolean) {
-    element.nativeElement.parentNode
-      .querySelectorAll('input')
-      .forEach((elem: HTMLInputElement) => (elem.disabled = disabled));
+    element.nativeElement.parentNode.querySelector('input').disabled = disabled;
   }
 }

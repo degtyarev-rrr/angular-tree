@@ -6,16 +6,18 @@ import { TreeItem } from './tree-item';
 */
 
 export abstract class Tree {
-  parent!: Tree;
-  children!: Tree[];
-  treeItem!: TreeItem;
+  parent?: Tree;
+  children?: Tree[];
+  treeItem?: TreeItem;
   selected: boolean = false;
   isBranch: boolean = false;
+  static selectedItemsId: Set<string> = new Set();
 
   checkSiblings() {
     if (!this.parent) return;
 
-    if (this.parent.children.every(item => item.selected)) {
+    if (this.parent.children!.every(item => item.selected)) {
+      Tree.selectedItemsId.add(this.parent.treeItem!.id);
       this.parent.selected = true;
       this.parent.checkSiblings();
     }
@@ -24,6 +26,7 @@ export abstract class Tree {
   removeSelectForParent() {
     if (!this.parent) return;
 
+    Tree.selectedItemsId.delete(this.treeItem!.id);
     this.parent.selected = false;
     this.parent.removeSelectForParent();
   }
@@ -33,7 +36,12 @@ export abstract class Tree {
 
 export class Leaf extends Tree {
   changeSelect(selectValue: boolean) {
-    if (!selectValue) this.removeSelectForParent();
+    if (!selectValue) {
+      this.removeSelectForParent();
+      Tree.selectedItemsId.delete(this.treeItem!.id);
+    }
+
+    if (selectValue) Tree.selectedItemsId.add(this.treeItem!.id);
 
     this.selected = selectValue;
     this.checkSiblings();
@@ -51,7 +59,12 @@ export class Branch extends Tree {
   }
 
   changeSelect(selectValue: boolean): void {
-    if (!selectValue) this.removeSelectForParent();
+    if (!selectValue) {
+      this.removeSelectForParent();
+      Tree.selectedItemsId.delete(this.treeItem!.id);
+    }
+
+    if (selectValue) Tree.selectedItemsId.add(this.treeItem!.id);
 
     this.selected = selectValue;
     this.changeSelectForChildren(this.selected);
