@@ -19,19 +19,21 @@ enum Colors {
   exportAs: 'search',
 })
 export class SearchDirective implements OnChanges {
-  backgroundColor!: string;
+  bgColor!: string;
   textColor!: string;
   isDisabled!: boolean;
+  itemText!: string;
   @Input() searchText!: string;
 
   constructor(private element: ElementRef) {}
 
   ngOnChanges(): void {
+    this.itemText = this.element.nativeElement.textContent;
     this.showResults();
   }
 
   @HostBinding('style.background') get getBackgroundColor(): string {
-    return this.backgroundColor;
+    return this.bgColor;
   }
 
   @HostBinding('style.color') get getTextColor(): string {
@@ -39,41 +41,24 @@ export class SearchDirective implements OnChanges {
   }
 
   showResults() {
-    if (
-      this.element.nativeElement.textContent.includes(this.searchText) &&
-      this.searchText
-    ) {
-      this.highlightItems(
-        false,
-        Colors.ENABLE_TEXT_COLOR,
-        Colors.ENABLE_BG_COLOR
-      );
+    if (this.itemText.includes(this.searchText) && this.searchText) {
+      this.isDisabled = false;
+      this.highlightItems(Colors.ENABLE_TEXT_COLOR, Colors.ENABLE_BG_COLOR);
       return;
     }
 
     if (this.searchText) {
-      this.highlightItems(
-        true,
-        Colors.DISABLE_TEXT_COLOR,
-        Colors.DISABLE_BG_COLOR
-      );
+      this.isDisabled = true;
+      this.highlightItems(Colors.DISABLE_TEXT_COLOR, Colors.DISABLE_BG_COLOR);
       return;
     }
 
-    this.highlightItems(false);
+    this.isDisabled = false;
+    this.highlightItems();
   }
 
-  highlightItems(
-    disabled: boolean,
-    color: string = '',
-    background: string = ''
-  ) {
-    this.textColor = color;
-    this.backgroundColor = background;
-    this.isDisabled = disabled;
-  }
-
-  disable(element: ElementRef, disabled: boolean) {
-    element.nativeElement.parentNode.querySelector('input').disabled = disabled;
+  highlightItems(textColor: string = '', bgColor: string = '') {
+    this.textColor = textColor;
+    this.bgColor = bgColor;
   }
 }

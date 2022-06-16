@@ -1,10 +1,5 @@
 import { Component, forwardRef, OnInit } from '@angular/core';
-import {
-  ControlValueAccessor,
-  FormBuilder,
-  FormGroup,
-  NG_VALUE_ACCESSOR,
-} from '@angular/forms';
+import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
 
 import { TreeService } from 'src/app/services/tree.service';
 import { Tree } from 'src/app/tree-structure/tree-structure';
@@ -25,35 +20,30 @@ import { data } from '../../../assets/data';
 })
 export class TreeComponent implements ControlValueAccessor, OnInit {
   tree!: Tree;
-  searchForm!: FormGroup;
   searchText!: string;
   onChange: Function = (_: any): void => {};
 
-  constructor(private treeService: TreeService, private fb: FormBuilder) {}
+  constructor(private treeService: TreeService) {}
 
-  ngOnInit(): void {
-    this.searchForm = this.buildSearchForm();
-    this.tree = this.treeService.getTree(data);
+  ngOnInit(): void {}
+
+  search(searchText: string): void {
+    this.searchText = searchText;
   }
 
-  buildSearchForm(): FormGroup {
-    return this.fb.group({
-      searchText: '',
-    });
-  }
-
-  submitSearchForm(): void {
-    this.searchText = this.searchForm.get('searchText')?.value;
+  trackByFn(index: number, item: Tree): string {
+    return item.treeItem!.id;
   }
 
   onCheckboxChange(event: any, item: Tree) {
-    item.changeSelect(!item.selected);
+    item.changeSelect(!item.isSelected);
     this.onChange(Array.from(Tree.selectedItemsId));
   }
 
-  writeValue(val: string[]): void {
-    Tree.selectedItemsId = new Set(val);
-    this.tree = this.treeService.getTree(data, val);
+  writeValue(selectedItems: string[]): void {
+    Tree.selectedItemsId = new Set(selectedItems);
+    this.treeService.setInitiallySelectedItems(selectedItems);
+    this.tree = this.treeService.getTree(data);
   }
 
   registerOnChange(fn: any): void {

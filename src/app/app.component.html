@@ -1,5 +1,5 @@
 <h2>First tree:</h2>
 
-<form [formGroup]="form">
-  <app-tree formControlName="selected" class="first-tree"></app-tree>
+<form [formGroup]="treeForm">
+  <app-tree [formControlName]="'selectedItems'" class="first-tree"></app-tree>
 </form>

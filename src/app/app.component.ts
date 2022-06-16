@@ -13,17 +13,17 @@ import { FormBuilder, FormGroup } from '@angular/forms';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class AppComponent implements OnInit {
-  form!: FormGroup;
+  treeForm!: FormGroup;
 
   constructor(private fb: FormBuilder) {}
 
   ngOnInit(): void {
-    this.form = this.buildForm(['id1', 'id4', 'id8', 'id10']);
+    this.treeForm = this.buildForm(['id1', 'id4', 'id8', 'id10']);
   }
 
   buildForm(arrayOfSelectedId: string[]): FormGroup {
     return this.fb.group({
-      selected: [arrayOfSelectedId],
+      selectedItems: [arrayOfSelectedId],
     });
   }
 }

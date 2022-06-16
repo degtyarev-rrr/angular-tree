@@ -3,13 +3,11 @@ import { Tree, Leaf, Branch } from '../tree-structure/tree-structure';
 
 /* TODO reduce + тернарник */
 export class TreeService {
-  getTree(items: TreeItem[], initiallySelectedItems: string[] = []): Tree {
+  initiallySelectedItems!: string[];
+
+  getTree(items: TreeItem[]): Tree {
     const tree: Tree = items.reduce((tree, item) => {
-      const component = this.createComponent(
-        item.children,
-        item,
-        initiallySelectedItems
-      );
+      const component = this.createComponent(item);
 
       tree.add(component, item);
 
@@ -19,33 +17,27 @@ export class TreeService {
     return tree;
   }
 
-  createComponent(
-    children: TreeItem[],
-    item: TreeItem,
-    initiallySelectedItems: string[]
-  ): Tree {
-    if (children.length) {
-      const branch = this.getTree(item.children, initiallySelectedItems);
-      this.addSelect(branch, item, initiallySelectedItems);
+  createComponent(item: TreeItem): Tree {
+    if (item.children.length) {
+      const branch = this.getTree(item.children);
+      this.addSelectedForItem(branch, item);
 
       return branch;
     }
 
     const leaf = new Leaf();
-    this.addSelect(leaf, item, initiallySelectedItems);
+    this.addSelectedForItem(leaf, item);
 
     return leaf;
   }
 
-  addSelect(
-    component: Tree,
-    item: TreeItem,
-    initiallySelectedItems: string[]
-  ): void {
-    if (!initiallySelectedItems.length) return;
+  setInitiallySelectedItems(arrayOfId: string[]): void {
+    this.initiallySelectedItems = arrayOfId;
+  }
 
-    if (initiallySelectedItems.includes(item.id)) {
-      component.selected = true;
+  addSelectedForItem(component: Tree, item: TreeItem): void {
+    if (this.initiallySelectedItems.includes(item.id)) {
+      component.isSelected = true;
     }
   }
 }
